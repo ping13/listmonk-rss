@@ -206,7 +206,7 @@ def main(dry_run: bool):
     last_update = get_last_update()
     
     # Fetch new RSS items
-    items = fetch_rss_feed(os.getenv("RSS_FEED"), last_update)
+    items = list(reversed(fetch_rss_feed(os.getenv("RSS_FEED"), last_update)))
     
     if not items:
         print(f"No new items found, I keep the update as of my last state '{last_update}' (UTC) in GitHub.")
