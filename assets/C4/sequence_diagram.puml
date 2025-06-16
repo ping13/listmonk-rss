@@ -22,10 +22,11 @@ Rel(subscriber, blog, "reads blog", "Web")
 Rel(subscriber, listmonk, "subscribes to newsletter", "Listmonk web form")
 Rel(author, blog, "writes content", "Blog CMS")
 
-Rel(newsletter, listmonk, "every week, automatically creates a scheduled campaign draft", "GitHub Action, HTTP API")
+Rel(newsletter, blog, "collects articles since the last newsletter campaign", "RSS")
+Rel(newsletter, listmonk, "every week, automatically creates a scheduled campaign draft with latest articles", "GitHub Action, HTTP API")
 Rel(newsletter, pushover, "trigger notification to author", "HTTP API")
 Rel(pushover, author, "informs about a scheduled campaign due in 3 hours", "Push Notification")
-Rel(author, listmonk, "reviews and edit campaign draft if necessary", "Listmonk web app")
+Rel(author, listmonk, "reviews and edits campaign draft if necessary", "Listmonk web app")
 Rel(listmonk, subscriber, "sends newsletters after 3 hour delay", "SMTP")
 Rel(subscriber, listmonk, "may change subscription status", "Listmonk web form")
 
