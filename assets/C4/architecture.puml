@@ -1,5 +1,6 @@
 @startuml
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
 
 ' Adjust layout to be more left-to-right
 left to right direction
@@ -7,16 +8,13 @@ left to right direction
 
 title Listmonk RSS Newsletter Automation 
 
-' Define actors and systems
-Person(author, "Author", "Writes blog content")
-Person(subscriber, "Newsletter Subscriber", "Receives newsletters")
-
 ' Automation system boundary
-System_Boundary(system, "Newsletter Automation", "Automated newsletter workflow") {
-    Container(script, "Python Script", "python", "RSS feed processing")
-    System(github_actions, "GitHub Actions", "Workflow automation")
-    System(pushover, "Pushover", "Notification service")
+System_Boundary(system, "Listmonk-RSS", "Automated newsletter workflow") {
+       Container(github_actions, "GitHub Actions", "Workflow automation")
+       Container(github_config, "GitHub Config", "Configuration settings")
+       Container(script, "Python Script", "python", "RSS feed processing")
 }
+System(pushover, "Pushover", "Notification service")
 
 
 ' Content Management Systems boundary
@@ -24,16 +22,23 @@ System(listmonk, "Listmonk", "Newsletter management: subscribers, lists, campaig
 System(blog, "Blog with RSS Feed", "Content source")
 
 
+' Define actors and systems
+Person(author, "Author", "Writes blog content")
+Person(subscriber, "Reader", "reads blog and wants to subscribe")
+
 ' Relationships
-Rel_Neighbor(author, blog, "writes content")
+Rel_Down(author, blog, "writes content")
 Rel_Neighbor(subscriber, blog, "reads blog and subscribes to", "Web")
 Rel(blog,listmonk, "signup form for a newsletter subscription", "HTML")
 Rel(blog, script, "provides RSS feed")
-Rel(script, listmonk, "creates a scheduled campaigns", "HTTP API")
+Rel(script, listmonk, "creates a scheduled campaign draft", "HTTP API")
 Rel(script, pushover, "sends notifications when campaign is scheduled", "HTTP API")
-Rel(pushover, author, "notifies about a scheduled campaign", "Pushover")
+Rel_Back(author, pushover, "notifies about a scheduled campaign", "Pushover")
 Rel(listmonk, subscriber, "sends newsletters", "SMTP")
 Rel(github_actions, script, "triggers", "cron-job")
+Rel_Right(github_config, github_actions, "defines")
+Rel_Down(author, github_config, "sets configuration")
+Rel(author, listmonk, "edit campaign draft if necessary")
 
 SHOW_FLOATING_LEGEND()
 

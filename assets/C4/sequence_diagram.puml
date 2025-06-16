@@ -1,0 +1,33 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Sequence.puml
+
+title Listmonk RSS Newsletter Automation 
+
+SHOW_ELEMENT_DESCRIPTIONS()
+SHOW_FOOT_BOXES()
+
+' Define actors and systems
+Person(author, "Author", "Writes blog content")
+System(blog, "Blog with RSS Feed", "Any CMS like Wordpress, Ghost, Hugo, ... ")
+Person(subscriber, "Reader", "reads blog and wants to subscribe")
+System(newsletter, "Listmonk-RSS", "Automated newsletter workflow running as a repo on GitHub")
+System(listmonk, "Listmonk", "Newsletter management: subscribers, lists, campaigns")
+System(pushover, "Pushover (optional)", "Notification service")
+
+
+' Seqeunce as relationships
+Rel(author, listmonk, "sets up a mailing list for her blog", "Listmonk Webapp")
+Rel(author, newsletter, "sets configuration for newsletter automation", "GitHub Repository settings")
+Rel(subscriber, blog, "reads blog", "Web")
+Rel(subscriber, listmonk, "subscribes to newsletter", "Listmonk web form")
+Rel(author, blog, "writes content", "Blog CMS")
+
+Rel(newsletter, listmonk, "every week, automatically creates a scheduled campaign draft", "GitHub Action, HTTP API")
+Rel(newsletter, pushover, "trigger notification to author", "HTTP API")
+Rel(pushover, author, "informs about a scheduled campaign due in 3 hours", "Push Notification")
+Rel(author, listmonk, "reviews and edit campaign draft if necessary", "Listmonk web app")
+Rel(listmonk, subscriber, "sends newsletters after 3 hour delay", "SMTP")
+Rel(subscriber, listmonk, "may change subscription status", "Listmonk web form")
+
+
+@enduml

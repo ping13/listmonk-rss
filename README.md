@@ -23,9 +23,15 @@ providers.
 - GitHub account and a version of this repository
 - An existing RSS feed URL, obviously
 
-## Diagram
+## Diagrams
+
+### System Architecture
 
 ![Architecture](assets/C4/architecture.png)
+
+### Sequence Diagram
+
+![Sequence Diagram](assets/C4/sequence_diagram.png)
 
 ## Setup
 
