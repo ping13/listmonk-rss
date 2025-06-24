@@ -36,7 +36,7 @@ Rel(script, pushover, "sends notifications when campaign is scheduled", "HTTP AP
 Rel_Back(author, pushover, "notifies about a scheduled campaign", "Pushover")
 Rel(listmonk, subscriber, "sends newsletters", "SMTP")
 Rel(github_actions, script, "triggers", "cron-job")
-Rel_Right(github_config, github_actions, "defines")
+Rel_Right(github_config, github_actions, "provides environment variables and secrets")
 Rel_Down(author, github_config, "sets configuration")
 Rel(author, listmonk, "edit campaign draft if necessary")
 
