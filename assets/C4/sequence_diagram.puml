@@ -22,7 +22,7 @@ Rel(author, blog, "writes content", "Blog CMS")
 Rel(author, listmonk, "sets up a mailing list for her blog", "Listmonk Webapp")
 Rel(author, newsletter, "configures newsletter automation with listmonk-rss", "GitHub Repository settings")
 
-== Act 2: Reader subscribes to newslette r==
+== Act 2: Reader subscribes to newsletter ==
 
 Rel(subscriber, blog, "reads blog", "Web")
 Rel(subscriber, listmonk, "subscribes to newsletter", "Listmonk web form")
