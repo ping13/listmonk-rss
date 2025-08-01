@@ -29,8 +29,8 @@ Rel(subscriber, listmonk, "subscribes to newsletter", "Listmonk web form")
 
 == Act 3: A newsletter campaign is created and consumed ==
 
-Rel(newsletter, blog, "collects articles since the last newsletter campaign", "RSS")
-Rel(newsletter, listmonk, "every week, automatically creates a scheduled campaign draft with latest articles", "GitHub Action, HTTP API")
+Rel(newsletter, blog, "every week, collect new articles since the last newsletter campaign", "RSS")
+Rel(newsletter, listmonk, "create a scheduled campaign draft with latest articles (if any)", "GitHub Action, HTTP API")
 Rel(newsletter, pushover, "triggers notification to author", "HTTP API")
 Rel(pushover, author, "informs about a scheduled campaign due in 3 hours", "Push Notification")
 Rel(author, listmonk, "reviews and edits campaign draft if necessary", "Listmonk web app")
