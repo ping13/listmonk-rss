@@ -19,6 +19,16 @@ load_dotenv()
 # Constants
 TEMPLATE_FILE = Path("template.md.j2")
 
+def env(name: str, default=None):
+    """Read an environment variable, ignoring surrounding whitespace.
+
+    Empty values count as unset, since GitHub Actions passes unset
+    variables as empty strings.
+    """
+    value = os.getenv(name, "").strip()
+    return value or default
+
+
 def get_opengraph_data(url):
     response = httpx.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -33,8 +43,8 @@ def get_opengraph_data(url):
 
 def get_last_update() -> datetime:
     """Get the last update timestamp from GitHub repo variable."""
-    github_token = os.getenv("GH_TOKEN")
-    repo = os.getenv("GH_REPOSITORY")
+    github_token = env("GH_TOKEN")
+    repo = env("GH_REPOSITORY")
     url = f"https://api.github.com/repos/{repo}/actions/variables/LAST_UPDATE"
     
     headers = {
@@ -56,8 +66,8 @@ def get_last_update() -> datetime:
 
 def save_last_update(timestamp: datetime):
     """Save the last update timestamp to GitHub repo variable."""
-    github_token = os.getenv("GH_TOKEN")
-    repo = os.getenv("GH_REPOSITORY")
+    github_token = env("GH_TOKEN")
+    repo = env("GH_REPOSITORY")
     url = f"https://api.github.com/repos/{repo}/actions/variables/LAST_UPDATE"
     
     headers = {
@@ -81,8 +91,13 @@ def fetch_rss_feed(feed_url: str, last_update: datetime) -> list:
     feed = feedparser.parse(feed_url)
     new_items = []
     logging.info(f"There are in total {len(feed.entries)} entries for {feed_url}")
-    for entry in feed.entries:        
-        if datetime(*entry.published_parsed[:6]) > last_update:
+    for entry in feed.entries:
+        # Prefer the publication date; Atom feeds (e.g. Publii) may only have `updated`
+        date_parsed = entry.get("published_parsed") or entry.get("updated_parsed")
+        if not date_parsed:
+            logging.warning(f"Skipping entry without a date: {entry.get('link', entry.get('title'))}")
+            continue
+        if datetime(*date_parsed[:6]) > last_update:
             og = get_opengraph_data(entry.link)
             if og.get("image"):
                 entry.media_content=og.get("image")
@@ -133,7 +148,7 @@ def schedule_campaign(host: str, api_user: str, api_token: str, list_id: int, co
         print("*** This is a dry run, the campaign is scheduled 10 years in the future")
         delay_mins = 365 * 24 * 60 * 10
     else:
-        delay_mins = int(os.getenv("DELAY_SEND_MINS", 30))
+        delay_mins = int(env("DELAY_SEND_MINS", 30))
         
     send_datetime = datetime.now(timezone.utc) + timedelta(minutes=delay_mins)
     send_datetime = send_datetime.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -173,8 +188,8 @@ def schedule_campaign(host: str, api_user: str, api_token: str, list_id: int, co
         print(f"Campaign {campaign_id} successfully scheduled with {delay_mins} mins delay!")
 
         # Send Pushover notification
-        pushover_user_key = os.getenv("PUSHOVER_USER_KEY")
-        pushover_api_token = os.getenv("PUSHOVER_API_TOKEN")
+        pushover_user_key = env("PUSHOVER_USER_KEY")
+        pushover_api_token = env("PUSHOVER_API_TOKEN")
 
         if pushover_user_key and pushover_api_token:
             response = httpx.post(
@@ -198,7 +213,7 @@ def main(dry_run: bool):
         print("*** This is a dry run")
 
 
-    assert os.getenv("RSS_FEED"), "No RSS feed given"
+    assert env("RSS_FEED"), "No RSS feed given"
     # Load template
     template = Template(TEMPLATE_FILE.read_text())
     
@@ -206,7 +221,7 @@ def main(dry_run: bool):
     last_update = get_last_update()
     
     # Fetch new RSS items
-    items = list(reversed(fetch_rss_feed(os.getenv("RSS_FEED"), last_update)))
+    items = list(reversed(fetch_rss_feed(env("RSS_FEED"), last_update)))
     
     if not items:
         print(f"No new items found, I keep the update as of my last state '{last_update}' (UTC) in GitHub.")
@@ -217,20 +232,20 @@ def main(dry_run: bool):
         
     # Get list ID
     list_id = get_list_id(
-        host=os.getenv("LISTMONK_HOST"),
-        api_user=os.getenv("LISTMONK_API_USER"),
-        api_token=os.getenv("LISTMONK_API_TOKEN"),
-        list_name=os.getenv("LIST_NAME")
+        host=env("LISTMONK_HOST"),
+        api_user=env("LISTMONK_API_USER"),
+        api_token=env("LISTMONK_API_TOKEN"),
+        list_name=env("LIST_NAME")
     )
     
     # Schedule campaign 
     success = schedule_campaign(
-        host=os.getenv("LISTMONK_HOST"),
-        api_user=os.getenv("LISTMONK_API_USER"),
-        api_token=os.getenv("LISTMONK_API_TOKEN"),
+        host=env("LISTMONK_HOST"),
+        api_user=env("LISTMONK_API_USER"),
+        api_token=env("LISTMONK_API_TOKEN"),
         list_id=list_id,
         content=content,
-        subject=os.getenv("LIST_NAME"),
+        subject=env("LIST_NAME"),
         dry_run=dry_run
     )
     

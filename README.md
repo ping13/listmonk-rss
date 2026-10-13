@@ -40,7 +40,17 @@ providers.
 1. Fork this repository so that you can set up your own schedule and clone it.
 
 2. On GitHub, Create a new repository variable `LAST_UPDATE` in your GitHub
-   repo to persist the last update timestamp.
+   repo to persist the last update timestamp. The variable must exist before
+   the first run: the script updates it but cannot create it. Its value is an
+   ISO timestamp in UTC, e.g. `2025-02-07T16:55:54`. Only feed entries newer
+   than this timestamp are included, so for the first newsletter set it to
+   just before the oldest post you want to send. After each successful run,
+   the script sets it to the current time.
+
+   Entries are dated by their `published` date, or by their `updated` date if
+   a feed (e.g. an Atom feed) has no `published` date. In the latter case,
+   editing an old post makes it count as new again. Entries without any date
+   are skipped.
 
 3. Create a GitHub Personal Access Token with `repo` scope at
    <https://github.com/settings/tokens>, make sure that you have the following
