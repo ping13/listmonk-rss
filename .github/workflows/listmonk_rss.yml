@@ -33,6 +33,7 @@ jobs:
         LISTMONK_HOST: ${{ vars.LISTMONK_HOST }}
         LIST_NAME: ${{ vars.LIST_NAME }}
         DELAY_SEND_MINS: ${{ vars.DELAY_SEND_MINS }}
+        LISTMONK_TEMPLATE_ID: ${{ vars.LISTMONK_TEMPLATE_ID }}
         GH_REPOSITORY: ${{ vars.GH_REPOSITORY }}
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
         

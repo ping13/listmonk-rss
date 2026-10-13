@@ -161,6 +161,10 @@ def schedule_campaign(host: str, api_user: str, api_token: str, list_id: int, co
         "type": "regular",
         "send_at" : send_datetime
     }
+    # Use a specific Listmonk campaign template, otherwise Listmonk uses its default
+    template_id = env("LISTMONK_TEMPLATE_ID")
+    if template_id:
+        data["template_id"] = int(template_id)
     
     with httpx.Client() as client:
         response = client.post(url, json=data, headers=headers,auth=auth)

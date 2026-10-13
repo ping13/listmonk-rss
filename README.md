@@ -170,6 +170,7 @@ Once you have setup and tested everything locally, you can move it to GitHub:
 | LIST_NAME             | Name of the mailing list in Listmonk             | Yes      |
 | RSS_FEED              | URL of the RSS feed to monitor                   | Yes      |
 | DELAY_SEND_MINS        | Minutes to delay sending after creation (default: 30). In dry run mode, this is set to 10 years. | No       |
+| LISTMONK_TEMPLATE_ID  | ID of the Listmonk campaign template to use (default: Listmonk's default template). This is the HTML wrapper around the newsletter, see [Template Customization](#template-customization). | No       |
 | PUSHOVER_USER_KEY     | Pushover user key for notifications (optional)   | No       |
 | PUSHOVER_API_TOKEN    | Pushover API token for notifications (optional)  | No       |
 | GH_REPOSITORY         | GitHub repository in "owner/repo" format        | Yes      |
@@ -184,6 +185,12 @@ Edit `template.md.j2` to customize your newsletter format. The template uses Jin
   - `link`: Article URL
   - `summary`: Article summary
   - `media_content`: OpenGraph image URL
+
+`template.md.j2` only renders the newsletter body. The HTML around it (header,
+footer, styling) comes from a campaign template in Listmonk. By default,
+Listmonk uses its default template; to use a different one, set
+`LISTMONK_TEMPLATE_ID` to the template's ID, which is shown under *Campaigns →
+Templates* in Listmonk.
 
 
 ## Related work and Contributing
