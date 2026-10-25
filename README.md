@@ -5,6 +5,8 @@ source)](https://listmonk.app) and GitHub Actions, saving money compared to
 [Mailchimp](https://mailchimp.com/features/rss-to-email/) and other newsletter
 providers.
 
+[![Listmonk RSS Campaign](https://github.com/ping13/listmonk-rss/actions/workflows/listmonk_rss.yml/badge.svg)](https://github.com/ping13/listmonk-rss/actions/workflows/listmonk_rss.yml)
+
 ## Features
 
 - Schedule newsletter campaigns with latest update from your feed
